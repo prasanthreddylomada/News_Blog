@@ -11,20 +11,21 @@ def extract_title_from_url(url):
 
 def is_valid_title(title):
     """Checks if the title contains at least two instances of a single '-' (hyphen)."""
-    return title.count("-") >= 3  # Ensures at least two single '-' exist
+    return title.count("-") >= 2  # At least two hyphens in the title
 
 def scrape_source(source, max_urls):
+    """Scrapes news articles from the given source URL and returns valid article URLs."""
     print(f"Scraping source: {source}")
 
     try:
         # Fetch the webpage
         response = requests.get(source, headers={"User-Agent": "Mozilla/5.0"})
-        response.raise_for_status()  # Raise an error for bad responses (4xx, 5xx)
+        response.raise_for_status()  # Raise error for bad responses (4xx, 5xx)
 
-        # Parse the HTML content
+        # Parse HTML content
         soup = BeautifulSoup(response.text, "html.parser")
 
-        # Find the div containing the text "India News"
+        # Find the div containing "India News"
         india_news_div = None
         for div in soup.find_all("div"):
             if "India News" in div.get_text(strip=True):
@@ -33,12 +34,12 @@ def scrape_source(source, max_urls):
 
         if not india_news_div:
             print("No 'India News' section found.")
-            return
+            return []
 
-        # Find sub-divs containing URLs
-        urls = set()  # Use a set to avoid duplicates
+        # Extract valid article URLs
+        urls = set()
         for link in india_news_div.find_all("a", href=True):
-            url = urljoin(source, link["href"])  # Ensure absolute URLs
+            url = urljoin(source, link["href"])  # Convert to absolute URL
             title = extract_title_from_url(url)
 
             if is_valid_title(title):  # Apply filtering condition
@@ -47,27 +48,8 @@ def scrape_source(source, max_urls):
             if len(urls) >= max_urls:
                 break  # Stop if max URLs reached
 
-        # Print filtered URLs
-        if urls:
-            print(f"Found {len(urls)} valid articles:")
-            for url in urls:
-                print(url)
-        else:
-            print("No valid articles found.")
+        return list(urls)  # Return the URLs instead of printing
 
     except requests.exceptions.RequestException as e:
         print(f"Error fetching {source}: {e}")
-
-if __name__ == "__main__":
-    # Load scrapper configuration
-    config = configparser.ConfigParser()
-    config.read("scrapper.config")
-    
-    # Read sources and max URLs from config
-    sources_str = config.get("DEFAULT", "sources")
-    sources = [s.strip() for s in sources_str.split(",")]
-    max_urls = config.getint("DEFAULT", "max_urls")
-
-    # Process each source
-    for source in sources:
-        scrape_source(source, max_urls)
+        return []
