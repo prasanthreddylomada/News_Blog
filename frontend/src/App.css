@@ -1,0 +1,136 @@
+/* src/App.css */
+.container {
+  /* max-width: 1200px; */
+  margin: 0 auto;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 10px;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background-color: rgb(242, 239, 239);
+  /* color: white; Adjust text color for contrast */
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.news-blog-title {
+  position: relative;
+  left: -50px; /* Move 10px to the left */
+  /* Placeholder for font size */
+  font-size: 40;
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+.search-bar {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dropdown {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.dropdown label {
+  font-weight: bold;
+}
+
+.dropdown-menu {
+  border: 1px solid #ccc;
+  padding: 5px;
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.dropdown-item {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.selected-tags {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.selected-tag {
+  background: #28a745;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 3px;
+}
+
+.selected-tag button {
+  margin-left: 5px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.states-scroll {
+  overflow-x: auto;
+  white-space: nowrap;
+  margin-bottom: 20px;
+}
+
+.states-container {
+  display: flex;
+  gap: 10px;
+}
+
+.state-button {
+  padding: 10px 20px;
+  border: 1px solid #007bff;
+  background: white;
+  color: #007bff;
+  border-radius: 5px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.state-button.active {
+  background: #007bff;
+  color: white;
+}
+
+.news-section {
+  margin-top: 20px;
+}
+
+.blogs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.blog-card {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: box-shadow 0.3s;
+}
+
+.blog-card:hover {
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+@media (max-width: 600px) {
+  .states-container {
+    flex-direction: column;
+  }
+}
