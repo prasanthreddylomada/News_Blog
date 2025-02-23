@@ -74,4 +74,27 @@
     background-color: #5a6268;
     border-color: #545b62;
   }
+
+  /* Style for the blog summary title */
+.blog-summary-title {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+}
+
+/* Style for the blog summary subtitle */
+.blog-summary-subtitle {
+  font-weight: bold;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  text-indent: 20px;
+}
+
+/* Style for other text paragraphs in the summary */
+.blog-summary-text {
+  text-indent: 20px;
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
   

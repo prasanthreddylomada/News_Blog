@@ -1,0 +1,6 @@
+generate_summary:
+  description: >
+    Go through the given {information} and generate a structured summary with Title, Subtitle, and Key Info.
+  expected_output: >
+    A well-structured summary containing a Title and Key Information.
+  agent: summary_writer

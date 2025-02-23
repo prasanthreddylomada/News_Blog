@@ -1,0 +1,15 @@
+generate_nre:
+  description: >
+    Analyze the given {paragraph} and extract named entities such as people, locations, organizations,dates , etc.
+    And the given information is a news article so give which category the given {paragraph} belongs to like sports, politics,bussiness,technology,education and entertainment etc.
+  expected_output: >
+    I want a json object with the following structure:
+    {
+      "ner": ["entity1", "entity2", "entity3", ...]
+      "state":"string"
+    }
+    In the JSON ner is the array of strings, each string representing a named entity.I don't want wheather it is location or person or organization etc.
+    And 'state' essentially refers to the state of India or Location in India the news article is associated with.
+  agent: NER
+ 
+
