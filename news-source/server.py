@@ -37,7 +37,7 @@ while True:
                 "url": article,
                 "registered_at": time.time(),
                 "nationality": "India",
-                "state": "Karnataka",
+                "state": "",
                 "extraTags": [],
                 "summary" : ""
             })
