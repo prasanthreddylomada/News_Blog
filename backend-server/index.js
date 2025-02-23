@@ -19,14 +19,16 @@ const blogSchema = new mongoose.Schema({
   registeredAt: { type: Date, default: Date.now },
   nationality: { type: String },
   state: { type: String },
-  extraTags: { type: [String] }
+  extraTags: { type: [String] },
+  keywords: { type: [String] }
 });
 
 const Blog = mongoose.model('Blog', blogSchema);
 
 // Endpoint to register a new blog URL with additional data
-app.post('/register', async (req, res) => {
-  const { url, nationality, state, extraTags } = req.body;
+app.post('/add', async (req, res) => {
+  const { url, nationality, state, extraTags, keywords } = req.body;
+  console.log(req.body);
 
   if (!url) {
     return res.status(400).json({ error: 'URL is required' });
@@ -38,7 +40,7 @@ app.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'URL already registered' });
     }
 
-    const blog = new Blog({ url, nationality, state, extraTags });
+    const blog = new Blog({ url, nationality, state, extraTags, keywords });
     await blog.save();
 
     res.status(201).json({ message: 'Blog registered successfully', blog });
