@@ -48,16 +48,16 @@ while True:
             else :
                 print(response)
 
-        if doc_ids:
-            print(f"Sending {len(doc_ids)} document IDs to Agent Wrapper: {doc_ids}")
+    if doc_ids:
+        print(f"Sending {len(doc_ids)} document IDs to Agent Wrapper: {doc_ids}")
 
-            # Send document IDs to Agent Wrapper Server
-            try:
-                response = requests.post(f"{agent_wrapper_url}/process", json={"doc_ids": doc_ids})
-                response.raise_for_status()
-                print("Agent Wrapper acknowledged document processing.")
-            except requests.exceptions.RequestException as e:
-                print(f"Failed to notify Agent Wrapper: {e}")
+        # Send document IDs to Agent Wrapper Server
+        try:
+            response = requests.post(f"{agent_wrapper_url}/process", json={"doc_ids": doc_ids})
+            response.raise_for_status()
+            print("Agent Wrapper acknowledged document processing.")
+        except requests.exceptions.RequestException as e:
+            print(f"Failed to notify Agent Wrapper: {e}")
 
 
     print("Articles Scraped : ",len(articles),"Articles Added : ",articles_added)

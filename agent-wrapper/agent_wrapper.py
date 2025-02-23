@@ -1,8 +1,11 @@
 import configparser
 import time
 import threading
+import requests
 from flask import Flask, request, jsonify
 from pymongo import MongoClient
+from bs4 import BeautifulSoup
+from bson import ObjectId  # Import ObjectId
 
 # Load configuration
 config = configparser.ConfigParser()
@@ -12,10 +15,9 @@ process_sleep_time = config.getint("DEFAULT", "process_sleep_time")  # in second
 
 # Connect to MongoDB
 client = MongoClient(mongo_uri)
-# Use a specific database (adjust "blogs" as needed)
-db = client["blogs"]
+db = client["test"]  # 'blogs' is the database name
 
-# Global processing queue (list of document IDs)
+# Global processing queue (list of document IDs as strings)
 processing_queue = []
 
 app = Flask(__name__)
@@ -26,37 +28,80 @@ def process_docs():
     if not data or "doc_ids" not in data:
         return jsonify({"error": "No doc_ids provided"}), 400
     doc_ids = data["doc_ids"]
-    # Add received doc_ids to the processing queue
-    processing_queue.extend(doc_ids)
+    processing_queue.extend(doc_ids)  # Add received doc_ids to processing queue
     print(f"Received doc_ids: {doc_ids}. Current queue: {processing_queue}")
     return jsonify({"message": "Doc IDs added to processing queue"}), 200
 
-def mock_ner(doc_id):
-    # Mock function simulating Named Entity Recognition
+def scrape_website(url):
+    """Fetches article content from the given URL."""
+    try:
+        response = requests.get(url, timeout=5)
+        response.raise_for_status()  # Raise error if request failed
+        soup = BeautifulSoup(response.text, "html.parser")
+        
+        # Extract the main content (modify based on website structure)
+        paragraphs = soup.find_all("p")  # Get all <p> tags
+        content = " ".join([p.get_text(strip=True) for p in paragraphs])  # Concatenate text
+        
+        return content if content else "No content extracted."
+    
+    except requests.RequestException as e:
+        print(f"Error fetching {url}: {e}")
+        return None
+
+def mock_ner(text):
+    """Mock Named Entity Recognition (NER) processing."""
     return ["Entity1", "Entity2", "Entity3"]
 
-def mock_summary(doc_id):
-    # Mock function simulating summary generation
-    return f"This is a generated summary for document {doc_id}."
+def mock_summary(text):
+    """Mock summary generation."""
+    return f"Generated summary: {text[:150]}..."  # Truncate for mock summary
 
 def process_queue():
+    """Processes document IDs from the queue."""
     while True:
         if processing_queue:
-            # Get the first document ID from the queue
-            doc_id = processing_queue.pop(0)
-            print(f"Processing doc_id: {doc_id}")
-            # Call mock functions
-            ner_result = mock_ner(doc_id)
-            summary_result = mock_summary(doc_id)
-            # Update the document in MongoDB (assumes collection "blogs")
+            doc_id_str = processing_queue.pop(0)
+            try:
+                oid = ObjectId(doc_id_str)
+            except Exception as e:
+                print(f"Invalid doc_id {doc_id_str}: {e}")
+                continue
+
+            print(f"Processing doc_id: {doc_id_str}")
+
+            # Fetch document details from the "blogs" collection
+            doc = db.blogs.find_one({"_id": oid})
+            print(f"Document details: {doc}")
+            if not doc or "url" not in doc:
+                print(f"Document {doc_id_str} not found or missing URL.")
+                continue
+
+            url = doc["url"]
+            print(f"Scraping URL: {url}")
+            
+            # Scrape website content
+            article_content = scrape_website(url)
+            print(f"Scraped content: {article_content[:100]}...")  # Print first 100 characters
+            if not article_content:
+                print(f"Failed to scrape content for {url}")
+                continue
+
+            # Process with mock NER and summary functions
+            ner_result = mock_ner(article_content)
+            summary_result = mock_summary(article_content)
+
+            # Update the document in MongoDB with NER and summary
             result = db.blogs.update_one(
-                {"_id": doc_id},
-                {"$set": {"ner": ner_result, "summary": "summary"}}
+                {"_id": oid},
+                {"$set": {"ner": ner_result, "summary": summary_result}}
             )
+
             if result.modified_count:
-                print(f"Updated doc_id {doc_id} with NER and summary.")
+                print(f"Updated doc_id {doc_id_str} with NER and summary.")
             else:
-                print(f"Failed to update doc_id {doc_id} or no changes were needed.")
+                print(f"Failed to update doc_id {doc_id_str} or no changes were needed.")
+
         else:
             print("Processing queue empty, sleeping...")
             time.sleep(process_sleep_time)
@@ -66,5 +111,5 @@ if __name__ == '__main__':
     processing_thread = threading.Thread(target=process_queue, daemon=True)
     processing_thread.start()
 
-    # Run the Flask app on a desired port (e.g., 5001)
+    # Run the Flask app on port 5001
     app.run(host="0.0.0.0", port=5001)
