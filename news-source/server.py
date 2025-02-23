@@ -7,6 +7,7 @@ import requests
 config = configparser.ConfigParser()
 config.read('server.config')
 sleep_time_minutes = config.getint('DEFAULT', 'sleep_time_minutes')
+agent_wrapper_url = config.get("DEFAULT", "agent_wrapper_url")
 
 # Load scrapper configuration
 scrapper_config = configparser.ConfigParser()
@@ -26,7 +27,7 @@ while True:
         articles = scrapper.scrape_source(source, max_urls)  # Call function directly
         all_articles = all_articles + articles  # Store results
     
-    articles_added = 0
+    articles_added, doc_ids = 0, []
     for i,article in enumerate(articles):
         # Get call to backend_url/exists for each article
         exists_response = requests.get(f"{backend_url}/exists", params={"url": article})
@@ -37,13 +38,27 @@ while True:
                 "registered_at": time.time(),
                 "nationality": "India",
                 "state": "Karnataka",
-                "extraTags": ["prasanth" if i % 2 == 0 else "sai"],
+                "extraTags": [],
+                "summary" : ""
             })
 
             if response.status_code == 201:
                 articles_added += 1
+                doc_ids += [response.json()["blog"]["_id"]]
             else :
                 print(response)
+
+        if doc_ids:
+            print(f"Sending {len(doc_ids)} document IDs to Agent Wrapper: {doc_ids}")
+
+            # Send document IDs to Agent Wrapper Server
+            try:
+                response = requests.post(f"{agent_wrapper_url}/process", json={"doc_ids": doc_ids})
+                response.raise_for_status()
+                print("Agent Wrapper acknowledged document processing.")
+            except requests.exceptions.RequestException as e:
+                print(f"Failed to notify Agent Wrapper: {e}")
+
 
     print("Articles Scraped : ",len(articles),"Articles Added : ",articles_added)
 

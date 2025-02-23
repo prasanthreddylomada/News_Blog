@@ -2,9 +2,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const config = require('./server.config'); // Import config file
+const cors = require('cors');
 
 const app = express();
-
+app.use(cors());
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());
 
@@ -20,14 +21,25 @@ const blogSchema = new mongoose.Schema({
   nationality: { type: String },
   state: { type: String },
   extraTags: { type: [String] },
-  keywords: { type: [String] }
+  summary : { type: String }
 });
 
 const Blog = mongoose.model('Blog', blogSchema);
 
+app.get('/filters', async (req, res) => {
+    try {
+      const states = await Blog.distinct("state");
+      const tags = await Blog.distinct("extraTags");
+      console.log(states, tags);
+      res.json({ states, tags });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
 // Endpoint to register a new blog URL with additional data
 app.post('/add', async (req, res) => {
-  const { url, nationality, state, extraTags, keywords } = req.body;
+  const { url, nationality, state, extraTags, summary } = req.body;
   console.log(req.body);
 
   if (!url) {
@@ -40,7 +52,7 @@ app.post('/add', async (req, res) => {
       return res.status(400).json({ error: 'URL already registered' });
     }
 
-    const blog = new Blog({ url, nationality, state, extraTags, keywords });
+    const blog = new Blog({ url, nationality, state, extraTags, summary });
     await blog.save();
 
     res.status(201).json({ message: 'Blog registered successfully', blog });
@@ -67,7 +79,7 @@ app.get('/exists', async (req, res) => {
 
 // Endpoint to search blogs with filtering options
 app.get('/search', async (req, res) => {
-  const { states, tags, keyword } = req.query;
+  const { states, tags, summary } = req.query;
   let filter = {};
 
   if (states) {
@@ -78,13 +90,13 @@ app.get('/search', async (req, res) => {
     filter.extraTags = { $in: tags.split(',').map(s => s.trim()) };
   }
 
-  if (keyword) {
-    filter.$or = [
-      { nationality: { $regex: keyword, $options: 'i' } },
-      { state: { $regex: keyword, $options: 'i' } },
-      { extraTags: { $elemMatch: { $regex: keyword, $options: 'i' } } }
-    ];
-  }
+  // if (keyword) {
+  //   filter.$or = [
+  //     { nationality: { $regex: keyword, $options: 'i' } },
+  //     { state: { $regex: keyword, $options: 'i' } },
+  //     { extraTags: { $elemMatch: { $regex: keyword, $options: 'i' } } }
+  //   ];
+  // }
 
   try {
     const blogs = await Blog.find(filter).limit(config.maxResults);
@@ -95,7 +107,7 @@ app.get('/search', async (req, res) => {
 });
 
 // Start the server
-const PORT = config.port || 3000;
+const PORT = config.port || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

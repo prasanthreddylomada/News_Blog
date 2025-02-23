@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./BlogCard.css"; // Import custom styles
 
 function BlogCard({ blog }) {
   const [preview, setPreview] = useState({ title: "Loading...", content: "Fetching preview..." });
+  const [showSummary, setShowSummary] = useState(false);
+  const summaryPlaceholder = "This is a placeholder for the blog summary. The actual summary will be generated later.";
 
   useEffect(() => {
     async function fetchPreview() {
@@ -16,7 +19,6 @@ function BlogCard({ blog }) {
         const fetchedTitle = doc.querySelector("title")?.innerText || "No Title Available";
         let fetchedContent = doc.querySelector("meta[name='description']")?.content || "No preview available.";
         
-        // Limit preview to 40 words
         fetchedContent = fetchedContent.split(/\s+/).slice(0, 40).join(" ") + "...";
 
         setPreview({ title: fetchedTitle, content: fetchedContent });
@@ -32,23 +34,42 @@ function BlogCard({ blog }) {
   }, [blog.url]);
 
   return (
-    <div className="card mb-3 shadow-sm">
-      <div className="card-body">
-        <h5 className="card-title">{preview.title}</h5> {/* Smaller title */}
-        <p className="card-text text-muted small">{preview.content}</p> {/* Smaller text */}
+    <>
+      <div className="card mb-3 shadow-sm d-flex flex-column" style={{ minHeight: "250px" }}>
+        <div className="card-body d-flex flex-column">
+          <h5 className="card-title blog-title">{preview.title}</h5>
+          <p className="card-text blog-preview flex-grow-1">{preview.content}</p>
 
-        <div className="d-flex justify-content-between align-items-center">
-          <span className="badge bg-secondary">Tags: {blog.extraTags?.join(", ") || "None"}</span>
-          <span className="badge bg-info">State: {blog.state}</span>
-        </div>
-
-        <div className="mt-3">
-          <a href={blog.url} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
-            Read Original
-          </a>
+          <div className="mt-auto d-flex justify-content-between">
+            <a
+              href={blog.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-custom-primary"
+            >
+              Read Original
+            </a>
+            <button
+              className="btn btn-custom-secondary"
+              onClick={() => setShowSummary(true)}
+            >
+              View Summary
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Summary Popup (Full Screen) */}
+      {showSummary && (
+        <div className="summary-overlay">
+          <div className="summary-popup">
+            <button className="close-button" onClick={() => setShowSummary(false)}>✖</button>
+            <h4>Blog Summary</h4>
+            <p>{summaryPlaceholder}</p>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
