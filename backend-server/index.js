@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const config = require('./server.config'); // Import config file
 const cors = require('cors');
-
+const serverless = require('serverless-http');
 const app = express();
 app.use(cors());
 // Middleware to parse JSON bodies
@@ -111,3 +111,6 @@ const PORT = config.port || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+// app.use('/.netlify/functions/index', app);
+module.exports.handler = serverless(app);

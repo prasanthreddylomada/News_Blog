@@ -1,0 +1,10 @@
+[build]
+  command = "npm install"
+  functions = "netlify/functions"
+  # If you have a static frontend folder to publish, specify it here.
+  # publish = "public"
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/index"
+  status = 200
