@@ -1,6 +1,9 @@
-# News_Blog
+# News Blog
 
-A modular news blogging platform that periodically scrapes news sources, processes them for Named Entity Recognition (NER), state classification, and summary generation, and then displays them on a frontend. This project is composed of several components, each responsible for a specific part of the workflow.
+Ai Agent driven News Blogging Framework
+Continuosly monitors information sources for new News Articles. When a new article appears, automatically summarizes it and stores in DB, Performs Named Entity Recognition (NER) on the artcile, allowing to group multiple articles which carry closely related data & also understands and interprets the geo-location of the news. 
+
+Checkout the table of contents to a get a better picture !!
 
 ---
 
