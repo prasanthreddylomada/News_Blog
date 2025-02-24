@@ -22,6 +22,7 @@ Checkout the table of contents to a get a better picture !!
 - **news-source**: Watches for new articles in `$sources` at periodic intervals of `$sleep_time_minutes`. Makes an entry in DB (via `backend-server`) and Notifys `news_flow`.
 - **news_flow**: Queues articles received from `news-sources`. Calls `agent-wrapper` to generate Summary, Entities, Location Analysis. 
 - **agent-wrapper**: API end point for Ai Agent. Given article link, performs Summarization, Named Entity Recognition & Location Analysis. Updates entry in DB (via `backend-server`) with information extracted by Ai Agent.
+- **agent** : Agent deployed using `crew-ai` framework. Agent internally uses `Mistral` model from  `ollama`. All this logic is abstracted by `agent-wrapper`.
 - **backend-server**: Interface to access MongoDb database, accessed by `news-source`, `agent-wrapper` & `frontend`.
 - **frontend**: A React application that displays the processed news articles to end users.
 
