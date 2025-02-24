@@ -2,10 +2,12 @@ import configparser
 import time
 import threading
 import requests
+import json
 from flask import Flask, request, jsonify
 from pymongo import MongoClient
 from bs4 import BeautifulSoup
 from bson import ObjectId  # Import ObjectId
+
 from crews.Summarise_crew.Summarise_crew import SummariseCrew
 from crews.NER_crew.NER_crew import NERCrew
 # Load configuration
@@ -57,8 +59,7 @@ def mock_ner(text):
         .kickoff(inputs={'paragraph': text})
     )
 
-    result_json = result.raw 
-
+    result_json = json.loads(result.raw)
     return result_json["ner"],result_json["state"]
 
 def mock_summary(text):
