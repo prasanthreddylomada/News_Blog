@@ -8,7 +8,7 @@ Checkout the table of contents to a get a better picture !!
 ---
 
 ## Table of Contents
-1. [Overview](#overview)  
+1. [Modules](#overview)  
 2. [File Structure](#file-structure)  
 3. [System Flow Diagram](#system-flow-diagram)  
 4. [Setup Instructions](#setup-instructions)  
@@ -20,7 +20,7 @@ Checkout the table of contents to a get a better picture !!
 
 ## Overview
 
-- **news-source**: Scrapes external news websites at fixed intervals, storing new URLs and notifying the `news_flow`.
+- **news-source**: Watches for new articles in `$sources` configured at periodic intervals of `$sleep_time_minutes`. Makes an entry in DB and Notifys `news_flow`.
 - **news_flow**: Periodically checks for new URLs from `news-source`, invokes the `agent-wrapper` for additional processing (NER, state classification, summary).
 - **agent-wrapper**: A Python module that interfaces with various NLP/LLM agents.
 - **backend-server**: A Node.js server that interfaces with MongoDB to store and retrieve processed news data.
