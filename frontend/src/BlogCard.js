@@ -84,7 +84,7 @@ function BlogCard({ blog }) {
           <h5 className="card-title blog-title font-weight-bold">
             {preview.title}
           </h5>
-          <p className="card-text blog-preview flex-grow-1 text-muted">
+          <p className="card-text blog-preview flex-grow-1 text-muted" style={{ overflowY: "auto", maxHeight: "100px" }}>
             {preview.content}
           </p>
 

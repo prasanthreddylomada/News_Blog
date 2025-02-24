@@ -38,10 +38,12 @@ function App() {
 
   return (
     <div className="container">
-      {/* Title and SearchBar in a Row without top margin */}
-      <div className="d-flex align-items-center justify-content-between" style={{ marginTop: '0' }}>
-        <h1 className="news-blog-title">News Blog</h1> {/* Moved 10px left */}
-        <div className="flex-grow-1 d-flex justify-content-center" style={{ marginTop: '0' }}>
+      {/* Row for News Blog Title and Search Bar */}
+      <div className="row align-items-center">
+        <div className="col-md-4">
+          <h1 className="news-blog-title">News Blog</h1>
+        </div>
+        <div className="col-md-8 d-flex justify-content-end">
           <SearchBar 
             availableTags={availableTags} selectedTags={selectedTags} setSelectedTags={setSelectedTags} 
             availableStates={availableStates} selectedStates={selectedStates} setSelectedStates={setSelectedStates} 
@@ -50,7 +52,7 @@ function App() {
       </div>
 
       {/* News Section */}
-      <div className="news-section">
+      <div className="news-section mt-3">
         <div className="blogs">
           {blogs.map((blog, index) => (
             <BlogCard key={index} blog={blog} />
@@ -58,6 +60,8 @@ function App() {
         </div>
       </div>
     </div>
+
+  
   );
 }
 
