@@ -105,6 +105,18 @@ Install dependencies for the news source server and scraper:
 pip install -r requirements.txt
 ```
 
+Downaload and insall ollama from https://ollama.com/download
+
+Install Mistral model (Base LLM For Agent)
+```bash
+ollama run mistral
+```
+
+Run the LLM in new a terminal
+```bash
+taskkill /IM "ollama.exe" /F && ollama serve
+```
+
 Install Node.js dependencies for the backend server:
 
 ```bash
