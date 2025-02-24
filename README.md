@@ -69,23 +69,6 @@ News_Blog
 
 ---
 
-## System Flow Diagram
-
-```mermaid
-flowchart LR
-     A[news-source<br>(scraper)] -->|new URLs| B[backend-server + MongoDB]
-     A -->|notify| C[news_flow<br>(invokes agent-wrapper)]
-     C -->|processed data| B
-     B --> D[frontend<br>(React App)]
-```
-
-- news-source scrapes news at fixed intervals and identifies new articles.
-- news_flow receives notifications about new articles and uses agent-wrapper for NER, state classification, and summary generation.
-- backend-server stores processed articles in MongoDB and serves them via an API.
-- frontend fetches articles from backend-server and displays them.
-
----
-
 ## Setup Instructions
 
 ### Prerequisites
