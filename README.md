@@ -20,13 +20,13 @@ Checkout the table of contents to a get a better picture !!
 
 ## Overview
 
-- **news-source**: Watches for new articles in `$sources` configured at periodic intervals of `$sleep_time_minutes`. Makes an entry in DB and Notifys `news_flow`.
-- **news_flow**: Periodically checks for new URLs from `news-source`, invokes the `agent-wrapper` for additional processing (NER, state classification, summary).
-- **agent-wrapper**: A Python module that interfaces with various NLP/LLM agents.
-- **backend-server**: A Node.js server that interfaces with MongoDB to store and retrieve processed news data.
+- **news-source**: Watches for new articles in `$sources` at periodic intervals of `$sleep_time_minutes`. Makes an entry in DB (via `backend-server`) and Notifys `news_flow`.
+- **news_flow**: Queues articles received from `news-sources`. Calls `agent-wrapper` to generate Summary, Entities, Location Analysis. 
+- **agent-wrapper**: API end point for Ai Agent. Given article link, performs Summarization, Named Entity Recognition & Location Analysis. Updates enty in DB (via `backend-server`) with information extracted by Ai Agent.
+- **backend-server**: Interface to access MongoDb database, accessed by `news-source`, `agent-wrapper` & `frontend`.
 - **frontend**: A React application that displays the processed news articles to end users.
 
-This project is designed to be **open-ended** and can be easily adapted for different data sources, intervals, or additional NLP tasks.
+All the units perform independently, it is very easy to add a new module. Also, no hardcoding was done, all important variables are stored in respective config files. Do Check Them Out !!.
 
 ---
 
