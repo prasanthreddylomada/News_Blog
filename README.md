@@ -142,7 +142,7 @@ npm start
 
 ---
 
-## How It Works
+## How It Works [Non Technical]
 
 - news-source scrapes external sources at a configurable interval (specified in scrapper.config) and checks for new articles.
 - When new articles are found, they are stored in the backend (MongoDB) and the news_flow service is notified.
@@ -152,7 +152,6 @@ npm start
   - Summary generation
 - The processed data (with NER, state tags, and summaries) is then sent to the backend-server, which stores it in MongoDB.
 - The frontend (React app) fetches the processed articles from the backend-server and displays them to users.
-- 
 ---
 
 ## How It Works Diagram
