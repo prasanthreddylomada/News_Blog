@@ -1,7 +1,6 @@
 # News Blog
 
-Ai Agent driven News Blogging Framework
-Continuosly monitors information sources for new News Articles. When a new article appears, it automatically summarizes it and stores in DB, Performs Named Entity Recognition (NER) on the artcile(to group multiple articles which carry closely related data) & performs location analysis to extract the geo location of the news. 
+Ai Agent driven News Blogging Framework, it continuosly monitors information sources for new News Articles. When a new article appears, it automatically summarizes it and stores in DB, Performs Named Entity Recognition (NER) on the artcile(to group multiple articles which carry closely related data) & performs location analysis to extract the geo location of the news. 
 
 Checkout the table of contents to a get a better picture !!
 
