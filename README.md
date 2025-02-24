@@ -7,7 +7,7 @@ Checkout the table of contents to a get a better picture !!
 ---
 
 ## Table of Contents
-1. [Modules](#overview)  
+1. [Modules](#modules)  
 2. [File Structure](#file-structure)  
 3. [System Flow Diagram](#system-flow-diagram)  
 4. [Setup Instructions](#setup-instructions)  
