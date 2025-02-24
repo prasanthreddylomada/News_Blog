@@ -5,24 +5,25 @@ A modular news blogging platform that periodically scrapes news sources, process
 ---
 
 ## Table of Contents
-1. [Overview](#overview)
-2. [File Structure](#file-structure)
-3. [System Flow Diagram](#system-flow-diagram)
-4. [Setup Instructions](#setup-instructions)
-    - [Prerequisites](#prerequisites)
-    - [Installation and Running](#installation-and-running)
-5. [How It Works](#how-it-works)
-6. [License](#license)
+1. [Overview](#overview)  
+2. [File Structure](#file-structure)  
+3. [System Flow Diagram](#system-flow-diagram)  
+4. [Setup Instructions](#setup-instructions)  
+5. [How It Works](#how-it-works)  
+6. [Configuration](#configuration)  
+7. [License](#license)  
 
 ---
 
 ## Overview
 
 - **news-source**: Scrapes external news websites at fixed intervals, storing new URLs and notifying the `news_flow`.
-- **news_flow**: Periodically checks for new URLs from `news-source`, invokes the `agent-wrapper` for additional processing (NER, state, summary).
+- **news_flow**: Periodically checks for new URLs from `news-source`, invokes the `agent-wrapper` for additional processing (NER, state classification, summary).
 - **agent-wrapper**: A Python module that interfaces with various NLP/LLM agents.
 - **backend-server**: A Node.js server that interfaces with MongoDB to store and retrieve processed news data.
 - **frontend**: A React application that displays the processed news articles to end users.
+
+This project is designed to be **open-ended** and can be easily adapted for different data sources, intervals, or additional NLP tasks.
 
 ---
 
@@ -33,7 +34,8 @@ A high-level view of the repository:
 ```
 News_Blog
 ├── agent-wrapper
-│   └── agent_wrapper.py
+│   ├── agent_wrapper.py
+│   └── server.config
 ├── backend-server
 │   ├── .gitignore
 │   ├── index.js
@@ -67,12 +69,9 @@ News_Blog
 └── requirements.txt
 ```
 
----
-
 ## Setup Instructions
 
 ### Prerequisites
-
 - Conda (for Python virtual environments)
 - Python (3.12.9 recommended)
 - Node.js (LTS version recommended)
@@ -127,7 +126,7 @@ npm install
 npm start
 ```
 
-(Optional) news_flow: Ensure you have the necessary Python dependencies (if any additional are needed), then run or schedule the news_flow scripts that listen for new URLs from news-source and process them.
+(Optional) news_flow: Ensure you have any additional Python dependencies installed, then run or schedule the news_flow scripts that listen for new URLs from news-source and process them.
 
 ---
 
@@ -164,3 +163,84 @@ sequenceDiagram
     FE->>BS: Fetch processed articles
     BS->>FE: Return processed articles
 ```
+
+---
+
+## Configuration
+
+This project is designed to be flexible and open-ended, allowing you to easily modify scraping intervals, MongoDB URIs, or any other parameters. Below are the default configuration files and their parameters. Adjust these as needed for your environment.
+
+### 1. Agent Wrapper Configuration
+**Location:** `agent-wrapper/server.config`  
+**Default Content:**
+
+```ini
+[DEFAULT]
+mongoURI = mongodb+srv://dbUser:dbPassword@blog.882k5.mongodb.net/?retryWrites=true&w=majority&appName=blog
+sleep_time_minutes = 10
+backend_url = http://localhost:5000
+process_sleep_time = 30
+```
+
+**Parameters:**
+- `mongoURI`: MongoDB connection string.
+- `sleep_time_minutes`: Interval (in minutes) to check for new data or tasks.
+- `backend_url`: URL of the backend server.
+- `process_sleep_time`: Time (in seconds) to pause between processing tasks.
+
+### 2. Backend Server Configuration
+**Location:** `backend-server/server.config.js`  
+**Default Content:**
+
+```js
+module.exports = {
+  mongoURI: 'mongodb+srv://dbUser:dbPassword@blog.882k5.mongodb.net/?retryWrites=true&w=majority&appName=blog', // Replace with your credentials
+  maxResults: 100,
+  port: 5000
+};
+```
+
+**Parameters:**
+- `mongoURI`: MongoDB connection string.
+- `maxResults`: Maximum number of results to return in queries.
+- `port`: The port on which the backend server runs.
+
+### 3. News Source Configuration
+**Location:** `news-source/server.config`  
+**Default Content:**
+
+```ini
+[DEFAULT]
+sleep_time_minutes = 10
+backend_url = http://localhost:5000
+agent_wrapper_url = http://localhost:5001
+```
+
+**Parameters:**
+- `sleep_time_minutes`: Interval (in minutes) for scraping new articles.
+- `backend_url`: URL of the backend server.
+- `agent_wrapper_url`: URL of the agent-wrapper server.
+
+### 4. News Flow Configuration
+**Location:** `news_flow/server.config`  
+**Default Content:**
+
+```ini
+[DEFAULT]
+mongoURI = mongodb+srv://dbUser:dbPassword@blog.882k5.mongodb.net/?retryWrites=true&w=majority&appName=blog
+sleep_time_minutes = 10
+backend_url = http://localhost:5000
+process_sleep_time = 30
+```
+
+**Parameters:**
+- `mongoURI`: MongoDB connection string.
+- `sleep_time_minutes`: Interval (in minutes) to check for new URLs from news-source.
+- `backend_url`: URL of the backend server.
+- `process_sleep_time`: Time (in seconds) to pause between processing tasks.
+
+---
+
+## License
+
+This project is licensed under the MIT License. You are free to use, modify, and distribute this software in accordance with the license terms.
