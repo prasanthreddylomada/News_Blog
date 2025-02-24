@@ -107,7 +107,9 @@ pip install -r requirements.txt
 
 Downaload and insall ollama from https://ollama.com/download
 
-Install Mistral model (Base LLM For Agent)
+Downlaod Install Mistral model (Base LLM For Agent) from ollama https://github.com/ollama/ollama
+
+Run Mistral Model
 ```bash
 ollama run mistral
 ```
