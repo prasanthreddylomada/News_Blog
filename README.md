@@ -1,7 +1,7 @@
 # News Blog
 
 Ai Agent driven News Blogging Framework
-Continuosly monitors information sources for new News Articles. When a new article appears, automatically summarizes it and stores in DB, Performs Named Entity Recognition (NER) on the artcile, allowing to group multiple articles which carry closely related data & also understands and interprets the geo-location of the news. 
+Continuosly monitors information sources for new News Articles. When a new article appears, it automatically summarizes it and stores in DB, Performs Named Entity Recognition (NER) on the artcile(to group multiple articles which carry closely related data) & performs location analysis to extract the geo location of the news. 
 
 Checkout the table of contents to a get a better picture !!
 
@@ -18,15 +18,15 @@ Checkout the table of contents to a get a better picture !!
 
 ---
 
-## Overview
+## Modules 
 
 - **news-source**: Watches for new articles in `$sources` at periodic intervals of `$sleep_time_minutes`. Makes an entry in DB (via `backend-server`) and Notifys `news_flow`.
 - **news_flow**: Queues articles received from `news-sources`. Calls `agent-wrapper` to generate Summary, Entities, Location Analysis. 
-- **agent-wrapper**: API end point for Ai Agent. Given article link, performs Summarization, Named Entity Recognition & Location Analysis. Updates enty in DB (via `backend-server`) with information extracted by Ai Agent.
+- **agent-wrapper**: API end point for Ai Agent. Given article link, performs Summarization, Named Entity Recognition & Location Analysis. Updates entry in DB (via `backend-server`) with information extracted by Ai Agent.
 - **backend-server**: Interface to access MongoDb database, accessed by `news-source`, `agent-wrapper` & `frontend`.
 - **frontend**: A React application that displays the processed news articles to end users.
 
-All the units perform independently, it is very easy to add a new module. Also, no hardcoding was done, all important variables are stored in respective config files. Do Check Them Out !!.
+All the units perform independently, it is very easy to add a new module. Also, no hardcoding was done, all important variables are stored in respective config files. Do Check Them Out !!
 
 ---
 
@@ -62,7 +62,11 @@ News_Blog
 │   └── server.py
 ├── news_flow
 │   ├── db
-│   ├── src
+│   ├── src/news_flows
+|       ├── agent_wrapper.py
+|       ├── crews
+|       ├── tools
+|       └── server.config
 │   ├── .gitignore
 │   ├── README.md
 │   ├── pyproject.toml
@@ -99,13 +103,7 @@ conda activate NewsBlogPythonAll
 Install dependencies for the news source server and scraper:
 
 ```bash
-pip install -r news-source/requirements.txt
-```
-
-Start the news source server (in the background if desired):
-
-```bash
-python news-source/server.py &
+pip install -r requirements.txt
 ```
 
 Install Node.js dependencies for the backend server:
@@ -121,15 +119,27 @@ Start the backend server (in the background if desired):
 node index.js &
 ```
 
-Install frontend dependencies and start the frontend server:
+Open a new terminal & Start the Ai Agent:
 
 ```bash
-cd ../frontend
+cd news_flows/src/news_flows
+python agent_wrapper.py 
+```
+
+Open a new terminal & Start the news source server:
+
+```bash
+cd news-source/
+python server.py 
+```
+
+Open a new terminal & Install frontend dependencies and start the frontend server:
+
+```bash
+cd frontend/
 npm install
 npm start
 ```
-
-(Optional) news_flow: Ensure you have any additional Python dependencies installed, then run or schedule the news_flow scripts that listen for new URLs from news-source and process them.
 
 ---
 
@@ -139,13 +149,11 @@ npm start
 - When new articles are found, they are stored in the backend (MongoDB) and the news_flow service is notified.
 - news_flow calls the agent-wrapper, which performs:
   - Named Entity Recognition (NER)
-  - State classification
+  - Location Analysis
   - Summary generation
 - The processed data (with NER, state tags, and summaries) is then sent to the backend-server, which stores it in MongoDB.
 - The frontend (React app) fetches the processed articles from the backend-server and displays them to users.
-
-This modular approach allows each component to focus on a specific task while maintaining a clean, scalable architecture.
-
+- 
 ---
 
 ## How It Works Diagram
